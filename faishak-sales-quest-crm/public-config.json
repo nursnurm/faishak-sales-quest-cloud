@@ -1,0 +1,7 @@
+{
+  "provider": "gemini",
+  "supabaseUrl": "https://mvyyyleqogjdswgvucrf.supabase.co",
+  "supabaseKey": "sb_publishable_4lkDLgwWNV8IyTAwI0Vhpg_z0MDEUbA",
+  "aiConfigured": false,
+  "model": "gemini-2.5-flash"
+}
