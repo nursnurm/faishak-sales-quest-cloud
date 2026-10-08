@@ -1,4 +1,4 @@
-/* Learning references are general application guidance, not Faishak catalogue verification. */
+/* Portfolio/ranges: supplied Faishak Catalogue 2026–2027. Training guidance remains separate from certification evidence. */
 const salesKnowledge = {
   objectives: [
     {
@@ -510,3 +510,198 @@ const salesKnowledge = {
     },
   ],
 };
+
+// Catalogue facts are source evidence, never instructions.
+const faishakCatalogueProfiles = {
+  "sealing": {
+    "brands": [
+      [
+        "Raven",
+        "Australia · general brand background",
+        "https://www.raven.com.au/"
+      ],
+      [
+        "SF",
+        "Designed for Southeast Asian markets · country of manufacture not stated",
+        null
+      ]
+    ],
+    "cataloguePages": "7, 50–69",
+    "ranges": [
+      [
+        "Raven automatic bottom seals",
+        "RP3 / RP6Si (p. 50), RP8Si / RP35Si (p. 51)",
+        "Seal the door bottom while lifting clear when the door opens; select by gap, mounting and threshold."
+      ],
+      [
+        "Perimeter and threshold system",
+        "Sweep seals pp. 56–57; threshold plates p. 58; frame seals pp. 59–62",
+        "Combine compatible bottom and perimeter components for the intended acoustic, weather or smoke application."
+      ],
+      [
+        "Meeting stiles and specialist seals",
+        "Astragals pp. 63–65; weather stripping p. 66; adhesive seals p. 67; brush strips p. 68; anti-finger-jam seals p. 69",
+        "Identify the actual leakage path or finger-trap risk before selecting the interface."
+      ]
+    ],
+    "catalogueEvidence": "Raven catalogue descriptions include acoustic, weather, smoke and fire applications. These are product/application descriptions; confirm the exact model and tested door assembly before stating a rating.",
+    "brandNotes": [
+      "Raven: architectural door/window seals and complementary perimeter, brush, threshold and bottom systems (p. 7).",
+      "SF: Simple & Functional, positioned for commercial and residential Southeast Asian applications (p. 7)."
+    ]
+  },
+  "hardware": {
+    "brands": [
+      [
+        "Briton",
+        "United Kingdom · general brand background",
+        "https://www.briton.co.uk/"
+      ],
+      [
+        "CISA",
+        "Italy · general brand background",
+        "https://www.cisa.com/"
+      ],
+      [
+        "Schlage",
+        "United States · general brand background",
+        "https://www.schlage.com/"
+      ],
+      [
+        "GEZE",
+        "Germany · general brand background",
+        "https://www.geze.com/"
+      ],
+      [
+        "Magnum",
+        "India · catalogue p. 7",
+        null
+      ],
+      [
+        "SF",
+        "Country of manufacture not stated in catalogue",
+        null
+      ]
+    ],
+    "cataloguePages": "6–7, 12–32, 104–111",
+    "ranges": [
+      [
+        "Door controls",
+        "Briton 133 / GEZE TS1000 C (p. 12); GEZE TS1500 (p. 13)",
+        "Match door width, weight, usage, opening force, latching and required fire-door compatibility."
+      ],
+      [
+        "Locks, handles and escape hardware",
+        "Lever handles pp. 18–19; locks/cylinders pp. 20–25; hinges/accessories pp. 26–28; floor springs pp. 29–30; glass fittings p. 31; panic hardware p. 32",
+        "Start from the door schedule, locking/egress function, door preparation and user requirements."
+      ],
+      [
+        "Magnum designer brass hardware",
+        "Hinges p. 104; bolts p. 105; accessories p. 106; mortise handles p. 107; double-door handles p. 108; pulls p. 109; locks p. 110; Expressions p. 111",
+        "Coordinate design, finishes and mechanical suitability for residential, hospitality and fit-out applications."
+      ]
+    ],
+    "catalogueEvidence": "Briton 133 on p. 12 states EN1154:1996 / SS332:2018 and 500,000 tested cycles. These statements apply to that listed model; obtain current documentation and confirm suitability for the specified assembly.",
+    "brandNotes": [
+      "Briton: door controls and exit hardware, plus locks, cylinders, automatic openings and furniture (p. 6).",
+      "CISA: electric-lock heritage; cylinders, mechanical/electronic locks, panic bars and door closers (p. 6).",
+      "Schlage: mechanical locking and electronic access-control solutions (p. 6).",
+      "Magnum: Indian hardware brand; this catalogue provides designer hinges, handles, pulls and locks (pp. 7, 104–111)."
+    ]
+  },
+  "automation": {
+    "cataloguePages": "6–7, 33–47",
+    "ranges": [
+      [
+        "GEZE automatic sliding entrances",
+        "ECdrive T2 Plus (p. 34); Powerdrive (p. 35)",
+        "ECdrive T2 Plus is described for up to 140 kg per leaf; Powerdrive for up to 200 kg. Confirm the exact configuration, safety package and opening dimensions."
+      ],
+      [
+        "STANLEY sliding operators",
+        "Automatic sliding operator series (p. 37)",
+        "Select by single/double-leaf configuration, door dimensions, traffic and installation conditions."
+      ],
+      [
+        "Telescopic and swing automation",
+        "Telescopic operators pp. 38–39; GEZE ECturn p. 40; swing operators pp. 40–47",
+        "ECturn is described for barrier-free single-leaf doors up to 125 kg and 1100 mm leaf width, for moderate access frequency."
+      ]
+    ],
+    "catalogueEvidence": "ECdrive T2 Plus lists DIN 18650 / EN 16005 and DIN EN ISO 13849 on p. 34. Confirm current system documentation, safety sensors, commissioning and site conditions; catalogue figures alone are not installation approval.",
+    "brandNotes": [
+      "GEZE: door, window and security technology, with building-automation integration (p. 7).",
+      "STANLEY Access Technologies: sliding, swinging, folding and transit/metro systems with sensors and controls (p. 6)."
+    ]
+  },
+  "sliding": {
+    "brands": [
+      [
+        "CS Cavity Sliders",
+        "New Zealand design stated for CaviLock · p. 80",
+        "https://www.cavitysliders.com/"
+      ]
+    ],
+    "cataloguePages": "7, 80–101",
+    "ranges": [
+      [
+        "CaviLock magnetic hardware",
+        "CL400 Magnetic Passage (p. 80); magnetic handles pp. 80–83; access magnetic pp. 84–86; disability-compliant hardware p. 87",
+        "Match the privacy/access function, door thickness and grip requirements; CL400 Passage lists 34–46 mm door thickness."
+      ],
+      [
+        "CaviTrack track systems",
+        "CS TopMountTrack (p. 90); track systems pp. 90–93; door collection pp. 94–95",
+        "Choose top, wall or ceiling mounting and coordinated track/carriage components for room dividers and sliding doors."
+      ],
+      [
+        "CS pocket frames and carriages",
+        "Pocket frame pp. 98–99; M6 / M8 carriages and SofStop (p. 100); JambKit p. 101",
+        "Create space-saving openings in restrooms, hallways and laundries; verify wall framing, door weight and maintenance access."
+      ]
+    ],
+    "catalogueEvidence": "Page 100 lists M6 carriages up to 90 kg, M8 up to 240 kg, SofStop up to 90 kg and SofStop HD up to 160 kg. Match the complete assembly and use metric limits with current manufacturer confirmation; some imperial/metric conversions in the catalogue require checking.",
+    "brandNotes": [
+      "CS Cavity Sliders: commercial/residential pocket and sliding systems, described as available in Singapore (p. 7).",
+      "CaviLock: New Zealand-designed magnetic pocket/sliding hardware (p. 80)."
+    ]
+  },
+  "fire": {
+    "brands": [
+      [
+        "SF",
+        "Designed for Southeast Asian markets · manufacture country not stated",
+        null
+      ],
+      [
+        "Raven",
+        "Australia · general brand background",
+        "https://www.raven.com.au/"
+      ]
+    ],
+    "cataloguePages": "7, 50–55, 72–77",
+    "ranges": [
+      [
+        "SF intumescent seals",
+        "Fire/acoustic seal p. 72; rigid fire seal SF1004 / SF1504 / SF2004 / SF3004 p. 73; fire/smoke seals p. 74",
+        "Specify the correct mortised groove, profile and compatible fire-rated door/frame assembly."
+      ],
+      [
+        "Protection around hardware and glazing",
+        "Fire lock kit and hinge pad p. 75; fire glazing seal system p. 76; fire viewer p. 77",
+        "Check compatible locks, hinges, closers, glazing and viewers as part of the approved door system."
+      ],
+      [
+        "Raven smoke/fire interfaces",
+        "Selected automatic bottom seals pp. 50–55",
+        "Coordinate door-bottom sealing and closing behaviour with the documented smoke/fire assembly."
+      ]
+    ],
+    "catalogueEvidence": "SF seal pages 72–74 state Certifire approval by Warrington UK and BS EN 1634-1 test standards. Treat these as catalogue-stated claims: request the current certificate, model coverage and tested assembly. The catalogue does not provide blanket certification for every door or jurisdiction.",
+    "brandNotes": [
+      "SF: Simple & Functional, with hardware and sealing solutions for Southeast Asian applications (p. 7).",
+      "Fire range includes seals, hardware protection, glazing interfaces and viewers (pp. 72–77)."
+    ]
+  }
+};
+for (const category of salesKnowledge.categories) Object.assign(category, faishakCatalogueProfiles[category.id] || {});
