@@ -40,6 +40,7 @@ function normalizeWorkspace() {
   );
   if (s.dailyQuestDate && s.dailyQuestDate !== todaySG()) s.dailyQuests = [];
   s.dailyQuestDate = todaySG();
+  s.contacts ??= [];
   s.competitors ??= [];
   s.events ??= [];
   s.brief ??= {};
@@ -79,6 +80,7 @@ render = function () {
   renderPlan();
   renderHomeCoaching();
   renderPipelineRecords();
+  if (byId("contactList")) renderContactList();
   if (cloud.ready) scheduleCloudSave();
 };
 function renderPlan() {
@@ -283,7 +285,7 @@ async function copyText(text) {
     showToast("Copy is unavailable here. Select the text and copy manually.");
   }
 }
-const keywordGroups = salesKnowledge.categories;
+const keywordGroups = [{id:"broad", title:"Broad: doors", keywords:'door, doors, "door package", ironmongery'}, ...salesKnowledge.categories];
 byId("keywordGroups").innerHTML = keywordGroups
   .map((c) => `<button data-keyword-category="${c.id}">${c.title}</button>`)
   .join("");
@@ -301,7 +303,7 @@ byId("keywordGroups")
         buildBCIRecipe();
       }),
   );
-byId("bciKeywords").value = keywordGroups[1].keywords;
+byId("bciKeywords").value = keywordGroups[0].keywords;
 function buildBCIRecipe() {
   const keywords = byId("bciKeywords").value.trim();
   if (!keywords) {
@@ -313,7 +315,7 @@ function buildBCIRecipe() {
   byId("bciMessage").textContent =
     "Recipe prepared. Apply these filters in your BCI account.";
   byId("recipe").textContent =
-    `PROJECT SEARCH · PACKAGE-FOCUSED\n\nProject location: Singapore\nSector: ${byId("bciSector").value}\nStage: ${byId("bciStage").value}\nLast updated: within ${byId("bciUpdated").value} days\nMain contractor appointed: ${byId("bciAppointed").checked ? "YES" : "Not restricted"}\n\nREQUIRED KEYWORDS\n${keywords}\n\nEnter the terms in BCI’s Keyword(s) control. Use the supported match mode; if OR/multiple terms are unavailable, run separate searches for the phrases.\n\nReview package scope, timing, buyer and Lucas ownership. Project descriptions can omit package wording, so a keyword match still needs qualification.`;
+    `PROJECT SEARCH · PACKAGE-FOCUSED\n\nProject location: Singapore\nSector: ${byId("bciSector").value}\nStage: ${byId("bciStage").value}\nLast updated: within ${byId("bciUpdated").value} days\nMain contractor appointed: ${byId("bciAppointed").checked ? "YES" : "Not restricted"}\n\nREQUIRED KEYWORDS\n${keywords}\n\nEnter the terms in BCI’s Keyword(s) control. Use the supported match mode; if OR/multiple terms are unavailable, run separate searches for the phrases.\n\nPrioritise a confirmed open door package and its purchasing owner. A main-contract award is not proof of a placed door-package order. Recent project updates are not proof of open procurement. Search tender and non-tender routes; contact developers/architects early for specification, contractor QS/procurement or door specialists for buying, and property/facilities managers for occupied-building upgrades. Broad door searches may find irrelevant hits; narrow only after checking scope. Confirm scope, package status, quote deadline, supplier order and the actual buyer before pursuing.`;
   s.bciRecipe = {
     keywords,
     sector: byId("bciSector").value,
@@ -445,58 +447,58 @@ byId("competitorForm").onsubmit = async (e) => {
     byId("analyseCompetitor").disabled = false;
   }
 };
-let activeSequence = salesKnowledge.sequences[0],
-  activeStep = 0;
-function renderSequence() {
-  byId("sequenceIntro").innerHTML =
-    `<h3>${activeSequence.title}</h3><p>${activeSequence.strategy}</p><p class="mini muted">Inspired by useful-content, clear-offer and consultative discovery principles. A response replaces the schedule with an agreed next step.</p>`;
-  byId("sequenceDiagram").innerHTML = activeSequence.steps
-    .map(
-      (step, i) =>
-        `<button data-step="${i}" class="sequence-node ${i === activeStep ? "selected" : ""}"><span>${step.day}</span><b>${step.channel}</b><small>${step.goal}</small></button>${i < activeSequence.steps.length - 1 ? '<span class="sequence-arrow" aria-hidden="true">→</span>' : ""}`,
-    )
-    .join("");
-  byId("sequenceDiagram")
-    .querySelectorAll("[data-step]")
-    .forEach(
-      (btn) =>
-        (btn.onclick = () => {
-          activeStep = Number(btn.dataset.step);
-          renderSequence();
-        }),
-    );
-  const step = activeSequence.steps[activeStep],
-    message = step.message
-      .replaceAll("{project}", byId("sequenceProject").value || "your project")
-      .replaceAll(
-        "{package}",
-        byId("sequencePackage").value || "the relevant package",
-      );
-  byId("sequenceStep").innerHTML =
-    `<h3>${step.day} · ${step.channel}</h3><p>${step.goal}</p><blockquote>${escapeHTML(message)}</blockquote><div class="notice mini"><b>Response branch:</b> ${step.branch}</div><button id="copySequence" class="primary">Copy this message</button>`;
-  byId("copySequence").onclick = () => copyText(message);
+const outreachRoutes = [
+ {id:'main',title:'Projects · Main contractor',strategy:'Qualify the door-package buying window. Speak to QS/procurement, project manager or the appointed door specialist. Confirm who places the order.',subject:'{project} — door package status',opening:'Hi {name}, I’m {sender} from Faishak. We support door hardware, seals, automatic entrances and sliding systems. For {project}, may I check whether the {package} package has been awarded or ordered, and who handles it? If it is still open, I can help review the schedule and relevant product documents.',follow:'Hi {name}, following up on the package status for {project}. Is it still being priced, awaiting approval or already placed? If another team handles purchasing, could you point me to the right person?'},
+ {id:'specifier',title:'Projects · Developer / Architect',strategy:'Early design: understand the specification intent, performance and decision process. At tender or construction stage, ask about approved substitutions rather than assuming changes are welcome.',subject:'{project} — door specification support',opening:'Hi {name}, I’m {sender} from Faishak. For {project}, we can help with door hardware and sealing selections alongside entrance and sliding systems. Are the {package} requirements still being developed, or is the schedule already fixed? I’d like to understand the design intent and which technical documents would be useful.',follow:'Hi {name}, would a short review of the {package} requirements for {project} be useful? We can focus on the specified function, compatible interfaces and supporting documents. If the specification is fixed, please let me know the route for any alternatives.'},
+ {id:'cold',title:'Cold · New prospect',strategy:'Introduce yourself without assuming there is a live project. Ask about their role and a relevant need; earn permission for a short conversation before sending a catalogue.',subject:'Introduction — Faishak door and hardware support',opening:'Hi {name}, I’m {sender} from Faishak. We help project teams with door hardware, sealing systems, automatic entrances and sliding/pocket solutions. I’m getting to know the team at {company}; do you handle these requirements, or is there someone else I should introduce myself to? If relevant, may I send a brief overview tailored to your work?',follow:'Hi {name}, just following up on my introduction. Which types of door or hardware requirements does your team handle most often? I’m happy to share a relevant example rather than a full catalogue.'},
+ {id:'facilities',title:'Property / Facilities manager',strategy:'Start with an operational problem: failed closers, draughts, privacy, access or maintenance. Establish property, responsibility and planned replacement budget; avoid new-build tender language.',subject:'{company} — door maintenance and upgrade support',opening:'Hi {name}, I’m {sender} from Faishak. We support door hardware and sealing requirements for building teams. Are there recurring door-closing, locking, noise or entrance-access issues at your properties, or any planned replacements? I’d like to understand the problem before suggesting products.',follow:'Hi {name}, is there a current door issue or planned upgrade where technical selection support would help? If your maintenance contractor handles this, who should I coordinate with?'},
+ {id:'specialist',title:'Door supplier / Specialist',strategy:'Discuss the actual door schedule, component compatibility and supply deadlines with the team assembling or installing the package.',subject:'{project} — hardware and seal coordination',opening:'Hi {name}, I’m {sender} from Faishak. Are you supplying or installing doors for {project}? If you handle the {package} selection, we can review the schedule, door preparation and compatible hardware/seals. What is still open, and when are approvals and delivery required?',follow:'Hi {name}, which items in the {project} door schedule are still being selected or priced? If everything is placed, I’m happy to connect for your next package instead.'}
+];
+const cadences = [
+ {day:'Day 0',channel:'Email',goal:'Introduce yourself / qualify relevance'},
+ {day:'Day 2',channel:'Call',goal:'If no reply, check the right person and timing'},
+ {day:'Day 4',channel:'WhatsApp',goal:'If appropriate and permitted, send a short follow-up'},
+ {day:'Day 8',channel:'Email',goal:'Offer relevant technical help without pressure'},
+ {day:'Day 14',channel:'Email',goal:'Close the loop; pause unless there is a reason to continue'}
+];
+let activeSequence = outreachRoutes[0], activeStep = 0, selectedContactId = '', outreachDraft = '';
+byId('sequenceTabs').insertAdjacentHTML('beforebegin', `<div class="card contact-crm"><div class="panel-title"><div><h2>Contact workspace</h2><p class="mini muted">Save contacts, start a sequence and log your own outreach.</p></div><button id="addOutreachContact" class="primary">+ Add contact</button></div><div id="contactList"></div><div class="form-columns"><label>Your name<input id="outreachSender" maxlength="100" placeholder="Syafiee"></label><label>Contact<select id="selectedContact"><option value="">Choose a saved contact</option></select></label></div><div class="outreach-actions"><button id="startSequence" class="primary">Start selected sequence</button><button id="editOutreachContact">Edit contact</button><button id="pauseSequence">Pause sequence</button><button id="resumeSequence">Resume paused sequence</button><button id="stopContact">Mark opted out</button></div><p id="contactSequenceStatus" class="mini" aria-live="polite"></p><div id="contactActivity"></div></div>`);
+document.body.insertAdjacentHTML('beforeend', `<dialog id="contactDialog" aria-labelledby="contactDialogTitle"><div class="panel-title"><h2 id="contactDialogTitle">Contact details</h2><button id="closeContactDialog" aria-label="Close">×</button></div><form id="contactForm"><input type="hidden" name="id"><div class="form-columns"><label>Name<input name="name" required maxlength="160"></label><label>Company<input name="company" required maxlength="200"></label></div><label>Role<select name="role"><option>Main contractor / QS / procurement</option><option>Developer / architect</option><option>New prospect</option><option>Property / facilities manager</option><option>Door supplier / specialist</option></select></label><div class="form-columns"><label>Email<input name="email" type="email" maxlength="200"></label><label>Phone / WhatsApp<input name="phone" placeholder="International format: +65 8123 4567" maxlength="30"></label></div><label><input name="whatsappAllowed" type="checkbox"> WhatsApp is appropriate and permitted for this contact</label><label>Project (optional)<input name="project" maxlength="200"></label><label>Relevant package<input name="package" maxlength="200"></label><label>Notes<textarea name="notes" maxlength="4000"></textarea></label><button class="primary" type="submit">Save contact</button></form></dialog>`);
+function selectedContact(){ return (s.contacts || []).find(c=>c.id===selectedContactId); }
+function renderContactList(){
+ s.contacts ??= [];
+ const select=byId('selectedContact'); select.innerHTML='<option value="">Choose a saved contact</option>'+s.contacts.map(c=>`<option value="${escapeHTML(c.id)}">${escapeHTML(c.name)} · ${escapeHTML(c.company)}</option>`).join('');select.value=selectedContactId;
+ byId('contactList').innerHTML=s.contacts.length?`<div class="crm-table-wrap"><table class="crm-table"><thead><tr><th>Contact</th><th>Company / role</th><th>Sequence</th><th>Last activity</th></tr></thead><tbody>${s.contacts.map(c=>`<tr><td><button class="crm-opportunity" data-select-contact="${escapeHTML(c.id)}">${escapeHTML(c.name)}</button></td><td>${escapeHTML(c.company)}<small>${escapeHTML(c.role)}</small></td><td>${escapeHTML(c.optedOut?'Opted out':c.sequence?.status || 'Not started')}</td><td>${escapeHTML(c.activity?.at(-1)?.date || '—')}</td></tr>`).join('')}</tbody></table></div>`:'<p class="muted">Add your first contact to begin.</p>';
+ byId('contactList').querySelectorAll('[data-select-contact]').forEach(b=>b.onclick=()=>chooseContact(b.dataset.selectContact));
+ const c=selectedContact();
+ byId('contactSequenceStatus').textContent=c ? `${c.name} · ${c.optedOut?'Opted out — do not contact':c.sequence ? `${c.sequence.status} · ${outreachRoutes.find(r=>r.id===c.sequence.route)?.title || c.sequence.route} · step ${Math.min(c.sequence.step+1,5)} of 5 · started ${c.sequence.started}`:'Sequence not started'}`:'Select a saved contact before starting outreach.';
+ byId('contactActivity').innerHTML=c?.activity?.length?`<details><summary>Activity history (${c.activity.length})</summary>${plainList(c.activity.map(a=>`${a.date} · ${a.channel}: ${a.note}`))}</details>`:'';
+ ['editOutreachContact','pauseSequence','resumeSequence','stopContact'].forEach(id=>byId(id).disabled=!c);
 }
-byId("sequenceTabs").innerHTML = salesKnowledge.sequences
-  .map((seq) => `<button data-sequence="${seq.id}">${seq.title}</button>`)
-  .join("");
-byId("sequenceTabs")
-  .querySelectorAll("button")
-  .forEach(
-    (btn) =>
-      (btn.onclick = () => {
-        activeSequence = salesKnowledge.sequences.find(
-          (seq) => seq.id === btn.dataset.sequence,
-        );
-        activeStep = 0;
-        byId("sequenceTabs")
-          .querySelectorAll("button")
-          .forEach((b) => b.classList.toggle("on", b === btn));
-        renderSequence();
-      }),
-  );
-byId("sequenceProject").oninput = renderSequence;
-byId("sequencePackage").oninput = renderSequence;
-renderSequence();
+function chooseContact(id){selectedContactId=id;const c=selectedContact();if(c){byId('sequenceProject').value=c.project||'';byId('sequencePackage').value=c.package||'';if(c.sequence){activeSequence=outreachRoutes.find(r=>r.id===c.sequence.route)||outreachRoutes[0];activeStep=Math.min(c.sequence.step,4);}else activeStep=0;}renderContactList();renderSequence();}
+function openContact(id=''){const c=s.contacts.find(c=>c.id===id);const f=byId('contactForm');f.reset();for(const key of ['id','name','company','role','email','phone','project','package','notes'])if(c && f.elements.namedItem(key))f.elements.namedItem(key).value=c[key]||'';if(c)f.elements.whatsappAllowed.checked=!!c.whatsappAllowed;byId('contactDialog').showModal();}
+byId('addOutreachContact').onclick=()=>openContact();byId('editOutreachContact').onclick=()=>openContact(selectedContactId);byId('closeContactDialog').onclick=()=>byId('contactDialog').close();
+byId('contactForm').onsubmit=e=>{e.preventDefault();const f=byId('contactForm'),d=new FormData(f);const phone=String(d.get('phone')||'').trim();if(phone && (!/^\+?[\d\s()-]+$/.test(phone)||!/^\d{8,15}$/.test(phone.replace(/\D/g,''))))return showToast('Use an international phone number including country code.');const prior=s.contacts.find(c=>c.id===d.get('id'));const c=prior||{id:crypto.randomUUID(),activity:[],sequence:null,optedOut:false};for(const k of ['name','company','role','email','phone','project','package','notes'])c[k]=String(d.get(k)||'').trim();c.whatsappAllowed=f.elements.whatsappAllowed.checked;c.lastUpdated=todaySG();if(!prior)s.contacts.push(c);selectedContactId=c.id;byId('contactDialog').close();save();chooseContact(c.id);showToast('Contact saved');};
+byId('selectedContact').onchange=e=>chooseContact(e.target.value);
+byId('startSequence').onclick=()=>{const c=selectedContact();if(!c)return showToast('Choose a saved contact first');if(c.optedOut)return showToast('This contact opted out. Do not start outreach.');if(c.sequence && !confirm('Start this sequence from step 1? Previous activity stays in history.'))return;c.sequence={route:activeSequence.id,step:0,started:todaySG(),status:'Active'};activeStep=0;save();renderSequence();};
+byId('pauseSequence').onclick=()=>{const c=selectedContact();if(c?.sequence){c.sequence.status='Paused';save();renderSequence();}};
+byId('resumeSequence').onclick=()=>{const c=selectedContact();if(!c || c.optedOut || c.sequence?.status!=='Paused')return showToast('Select a paused sequence for a contact who has not opted out.');c.sequence.status='Active';activeSequence=outreachRoutes.find(r=>r.id===c.sequence.route)||outreachRoutes[0];activeStep=Math.min(c.sequence.step,4);save();renderSequence();};
+byId('stopContact').onclick=()=>{const c=selectedContact();if(c && confirm('Mark this contact as opted out and stop outreach?')){c.optedOut=true;if(c.sequence)c.sequence.status='Stopped';save();renderSequence();}};
+function outreachMessage(){const c=selectedContact();let text=activeStep===0?activeSequence.opening:activeSequence.follow;if(activeStep===4)text='Hi {name}, I’ll close the loop on my earlier messages. If support with door hardware or sealing is useful in future, please feel free to reach out. Otherwise I’ll pause here. Thank you, {sender} — Faishak.';if(activeStep===1)text='Call opener: '+text+'\nIf they answer: ask one question, listen, and agree the next action. If no answer: log the attempt; continue only if appropriate.';const replacements={name:c?.name||'there',company:c?.company||'your company',sender:byId('outreachSender').value.trim()||'your Faishak contact',project:byId('sequenceProject').value.trim()||'your project',package:byId('sequencePackage').value.trim()||'door hardware and seals'};for(const [k,v]of Object.entries(replacements))text=text.replaceAll('{'+k+'}',v);return text;}
+function renderSequence(){
+ byId('sequenceTabs').querySelectorAll('[data-sequence]').forEach(b=>b.classList.toggle('on',b.dataset.sequence===activeSequence.id));
+ byId('sequenceIntro').innerHTML=`<h3>${escapeHTML(activeSequence.title)}</h3><p>${escapeHTML(activeSequence.strategy)}</p><p class="mini muted">Day offsets are suggested, not automated deadlines. A reply replaces the cadence with an agreed next step; stop after the final unanswered attempt.</p>`;
+ byId('sequenceDiagram').innerHTML=cadences.map((step,i)=>`<button data-step="${i}" class="sequence-node ${i===activeStep?'selected':''}"><span>${step.day}${selectedContact()?.sequence?.route===activeSequence.id ? " · " + new Date(Date.parse(selectedContact().sequence.started) + [0,2,4,8,14][i]*86400000).toISOString().slice(0,10) : ""}</span><b>${step.channel}</b><small>${step.goal}</small></button>${i<4?'<span class="sequence-arrow" aria-hidden="true">→</span>':''}`).join('');
+ byId('sequenceDiagram').querySelectorAll('[data-step]').forEach(b=>b.onclick=()=>{activeStep=Number(b.dataset.step);renderSequence();});
+ const c=selectedContact(),step=cadences[activeStep];outreachDraft=outreachMessage();
+ let subject=activeSequence.subject.replaceAll('{project}',byId('sequenceProject').value||'your project').replaceAll('{company}',c?.company||'your company');
+ byId('sequenceStep').innerHTML=`<h3>${step.day} · ${step.channel}</h3><p>${step.goal}</p><label>Email subject<input id="sequenceSubject" maxlength="250"></label><label>Review / edit message<textarea id="sequenceMessage" rows="7"></textarea></label><div class="notice mini">If they respond: record the outcome and pause the sequence. If wrong contact: ask for the owner and stop this cadence. If no reply: continue at the suggested interval only when relevant. Opening a draft does not mean it was sent.</div><div class="outreach-actions"><button id="copySequence">Copy message</button><a id="sendEmail" class="primary">Open email draft</a><a id="sendWhatsApp" class="primary" target="_blank" rel="noopener noreferrer">Open WhatsApp Web</a><a id="callContact">Call</a></div><label>Outcome / next action<textarea id="outreachOutcome" maxlength="2000" placeholder="No reply, spoke to QS, package already ordered, follow up on agreed date…"></textarea></label><div class="outreach-actions"><button id="completeOutreachStep" class="primary">Log completed step & continue</button><button id="logOutreachReply">Log reply & pause</button></div><p id="outreachLinkStatus" class="mini muted" aria-live="polite"></p>`;
+ byId('sequenceSubject').value=subject;byId('sequenceMessage').value=outreachDraft;
+ const links=()=>{const body=byId('sequenceMessage').value;const enabled=c && !c.optedOut;const phone=c?.phone?.replace(/\D/g,'');const email=byId('sendEmail'),wa=byId('sendWhatsApp'),call=byId('callContact');email.removeAttribute('href');wa.removeAttribute('href');call.removeAttribute('href');if(enabled && c.email)email.href='mailto:'+encodeURIComponent(c.email)+'?subject='+encodeURIComponent(byId('sequenceSubject').value)+'&body='+encodeURIComponent(body);if(enabled && c.whatsappAllowed && phone)wa.href='https://web.whatsapp.com/send?phone='+encodeURIComponent(phone)+'&text='+encodeURIComponent(body);if(enabled && phone)call.href='tel:+'+phone;for(const el of [email,wa,call]){el.setAttribute('aria-disabled',String(!el.hasAttribute('href')));el.onclick=()=>{if(!el.hasAttribute('href')){showToast('Save the required contact details and confirm channel permission first.');return false;}};}byId('outreachLinkStatus').textContent=c?.optedOut?'Outreach blocked: this contact opted out.':'Drafts only: review and press Send in your email or WhatsApp app. Log completion separately.';};links();byId('sequenceMessage').oninput=links;byId('sequenceSubject').oninput=links;byId('copySequence').onclick=()=>copyText(byId('sequenceMessage').value);
+ const log=(reply)=>{if(!c || c.optedOut || c.sequence?.status!=='Active' || c.sequence.route!==activeSequence.id || c.sequence.step!==activeStep)return showToast('Start an active sequence and select its current step before logging.');const note=byId('outreachOutcome').value.trim();if(!note)return showToast('Record the outcome or next action first.');c.activity??=[];c.activity.push({id:crypto.randomUUID(),date:todaySG(),channel:step.channel,note,message:byId('sequenceMessage').value,route:activeSequence.id,step:activeStep});if(reply)c.sequence.status='Paused';else{c.sequence.step++;if(c.sequence.step>=5)c.sequence.status='Completed';activeStep=Math.min(c.sequence.step,4);}save();renderSequence();showToast('Activity saved');};byId('completeOutreachStep').onclick=()=>log(false);byId('logOutreachReply').onclick=()=>log(true);
+ renderContactList();
+}
+byId('sequenceTabs').innerHTML=outreachRoutes.map(r=>`<button data-sequence="${r.id}">${r.title}</button>`).join('');byId('sequenceTabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{activeSequence=outreachRoutes.find(r=>r.id===b.dataset.sequence);activeStep=0;renderSequence();});byId('sequenceProject').oninput=renderSequence;byId('sequencePackage').oninput=renderSequence;byId('outreachSender').oninput=()=>{s.outreachSender=byId('outreachSender').value;save();renderSequence();};byId('outreachSender').onchange=()=>save();byId('outreachSender').value=s.outreachSender||'';renderContactList();renderSequence();
 byId("techniqueCards").innerHTML = salesKnowledge.techniques
   .map(
     (t) =>
